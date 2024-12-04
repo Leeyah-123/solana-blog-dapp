@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import * as anchor from '@coral-xyz/anchor';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Blog, IDL } from '../anchor/idl';
 
 interface BlogPost {
@@ -19,6 +19,7 @@ const SinglePostPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingLoading, setIsEditingLoading] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
 
@@ -72,6 +73,7 @@ const SinglePostPage: React.FC = () => {
     if (!post || !publicKey) return;
 
     try {
+      setIsEditingLoading(true);
       const provider = new anchor.AnchorProvider(
         connection,
         { publicKey, signTransaction } as anchor.Wallet,
@@ -104,6 +106,8 @@ const SinglePostPage: React.FC = () => {
     } catch (err) {
       console.error('Error updating post:', err);
       setError('Failed to update post');
+    } finally {
+      setIsEditingLoading(false);
     }
   };
 
@@ -223,9 +227,14 @@ const SinglePostPage: React.FC = () => {
           <div className="flex space-x-4">
             <button
               type="submit"
-              className="flex-1 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300"
+              disabled={isEditingLoading || !publicKey}
+              className="flex-1 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300 disabled:opacity-50"
             >
-              Save Changes
+              {isEditingLoading
+                ? 'Editing...'
+                : publicKey
+                ? 'Save Changes'
+                : 'Connect Wallet First'}
             </button>
             <button
               type="button"
