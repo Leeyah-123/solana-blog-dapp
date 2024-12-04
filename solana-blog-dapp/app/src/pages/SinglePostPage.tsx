@@ -19,9 +19,10 @@ const SinglePostPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [isEditingLoading, setIsEditingLoading] = useState(false);
+  const [isEditLoading, setIsEditLoading] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const { postPubkey } = useParams<{ postPubkey: string }>();
   const { connection } = useConnection();
@@ -73,7 +74,7 @@ const SinglePostPage: React.FC = () => {
     if (!post || !publicKey) return;
 
     try {
-      setIsEditingLoading(true);
+      setIsEditLoading(true);
       const provider = new anchor.AnchorProvider(
         connection,
         { publicKey, signTransaction } as anchor.Wallet,
@@ -107,7 +108,7 @@ const SinglePostPage: React.FC = () => {
       console.error('Error updating post:', err);
       setError('Failed to update post');
     } finally {
-      setIsEditingLoading(false);
+      setIsEditLoading(false);
     }
   };
 
@@ -120,6 +121,7 @@ const SinglePostPage: React.FC = () => {
     if (!confirmDelete) return;
 
     try {
+      setIsDeleteLoading(true);
       const provider = new anchor.AnchorProvider(
         connection,
         { publicKey, signTransaction } as anchor.Wallet,
@@ -139,6 +141,8 @@ const SinglePostPage: React.FC = () => {
     } catch (err) {
       console.error('Error deleting post:', err);
       setError('Failed to delete post');
+    } finally {
+      setIsDeleteLoading(false);
     }
   };
 
@@ -227,10 +231,10 @@ const SinglePostPage: React.FC = () => {
           <div className="flex space-x-4">
             <button
               type="submit"
-              disabled={isEditingLoading || !publicKey}
+              disabled={isEditLoading || !publicKey}
               className="flex-1 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300 disabled:opacity-50"
             >
-              {isEditingLoading
+              {isEditLoading
                 ? 'Editing...'
                 : publicKey
                 ? 'Save Changes'
@@ -269,10 +273,15 @@ const SinglePostPage: React.FC = () => {
                 Edit Post
               </button>
               <button
+                disabled={!publicKey || isDeleteLoading}
                 onClick={handleDelete}
-                className="flex-1 bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition duration-300"
+                className="flex-1 bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition duration-300 disabled:opacity-50"
               >
-                Delete Post
+                {isDeleteLoading
+                  ? 'Deleting...'
+                  : publicKey
+                  ? 'Delete Post'
+                  : 'Connect Wallet First'}
               </button>
             </div>
           )}
