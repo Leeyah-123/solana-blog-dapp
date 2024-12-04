@@ -7,7 +7,7 @@ A decentralized blogging platform built on Solana, allowing users to create, rea
 ## Live Deployment
 
 - **Web Application**: [https://solana-blog-dapp.vercel.app](https://solana-blog-dapp.vercel.app)
-- **Solana Program**: [Solana Explorer Link](https://solscan.io/account/8ouoyWWRuMmzGcJ64kpbQ8DCERKPX1k1JqDKbPJNN9ra?cluster=devnet)
+- **Solana Program**: [Solana Explorer Link](https://solana.fm/address/8ouoyWWRuMmzGcJ64kpbQ8DCERKPX1k1JqDKbPJNN9ra?cluster=devnet-solana)
 
 ## Project Structure
 
