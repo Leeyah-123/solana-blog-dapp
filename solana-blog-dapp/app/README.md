@@ -21,6 +21,9 @@ src/
 │   ├── CreatePostPage.tsx
 │   └── SinglePostPage.tsx
 │
+├── components/
+│   └── Navbar.tsx
+│
 ├── anchor/
 │   └── idl.ts
 │
